@@ -2,63 +2,88 @@ local ADDON_NAME, BQ = ...
 
 version = "v" .. C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or ""
 
-WL_DEFAULT = {
-	"Temple of Fal'adora",
-	"Falanaar Tunnels",
-	"Shattered Locus",
-	"Crestfall",
-	"Snowblossom Village",
-	"Havenswood",
-	"Jorundall",
-	"Molten Cay",
-	"Un'gol Ruins",
-	"The Rotting Mire",
-	"Whispering Reef",
-	"Verdant Wilds",
-	"The Dread Chain",
-	"Skittering Hollow",
-	"Torghast, Tower of the Damned",
-
-	-- New in v10.1.7.3
-	"Stormwind City",
-	"Orgrimmar",
-	"Valdrakken",
-}
-
-table.sort(WL_DEFAULT)
-
-BL_DEFAULT = {}
-
---Initialize config variables if they are not saved
-if ENABLED == nil then
-	ENABLED = 1
+BQ_RED = "|cffff3333"
+function msg_user(msg)
+	print(BQ_RED..ADDON_NAME.."|r: "..(msg or ""))
 end
 
-if VO_ENABLED == nil then
-	VO_ENABLED = 0
-end
+-- 12.0.0 Historically we never properly waited for the addon to load before handling variables so do it now
+local var_frame = CreateFrame("Frame")
+var_frame:RegisterEvent("ADDON_LOADED")
+var_frame:SetScript("OnEvent", function(self, event, arg1)
+    if event == "ADDON_LOADED" and arg1 == "BeQuiet" then
+		WL_DEFAULT = {
+			-- Withered army training
+			"Temple of Fal'adora",
+			"Falanaar Tunnels",
+			"Shattered Locus",
+			-- Island Expeditions
+			"Crestfall",
+			"Snowblossom Village",
+			"Havenswood",
+			"Jorundall",
+			"Molten Cay",
+			"Un'gol Ruins",
+			"The Rotting Mire",
+			"Whispering Reef",
+			"Verdant Wilds",
+			"The Dread Chain",
+			"Skittering Hollow",
+			-- Choreghast
+			"Torghast, Tower of the Damned",
+			-- Main cities for new content launches
+			"Stormwind City",
+			"Orgrimmar",
+			"Valdrakken",
+			"Dornogal"
+		}
 
-if BQ_SHOW_HEADS == nil then
-	BQ_SHOW_HEADS = true
-end
+		table.sort(WL_DEFAULT)
 
-if VERBOSE == nil then
-	VERBOSE = 1
-end
+		BL_DEFAULT = {}
 
-if BQ_SUPPRESS_INSTANCES == nil then
-	BQ_SUPPRESS_INSTANCES = false
-end
+		--Initialize config variables if they are not saved
+		if ENABLED == nil then
+			ENABLED = 1
+		end
 
---Default whitelist includes the withered army training zones from legion and island expeditions from BFA
-if WHITELIST == nil then
-	WHITELIST = WL_DEFAULT
-end
+		if VO_ENABLED == nil then
+			VO_ENABLED = 0
+		end
 
--- BLACKLIST defaults to empty. This preserves off behavior from before.
-if BLACKLIST == nil then
-	BLACKLIST = BL_DEFAULT
-end
+		if BQ_SHOW_HEADS == nil then
+			BQ_SHOW_HEADS = true
+		end
+
+		if VERBOSE == nil then
+			VERBOSE = 1
+		end
+
+		if BQ_SUPPRESS_INSTANCES == nil then
+			BQ_SUPPRESS_INSTANCES = false
+		end
+
+		--Default whitelist includes the withered army training zones from legion and island expeditions from BFA
+		if WHITELIST == nil then
+			WHITELIST = WL_DEFAULT
+		end
+
+		-- BLACKLIST defaults to empty. This preserves off behavior from before.
+		if BLACKLIST == nil then
+			BLACKLIST = BL_DEFAULT
+		end
+
+		-- Turn off BeQuiet for Midnight launch. The saved var should get created here so it should only happen once.
+		if NEW_EXPAC_LAUNCH == nil then			
+			NEW_EXPAC_LAUNCH = true
+			buildVersion, buildNumber, buildDate, interfaceVersion, localizedVersion, buildInfo = GetBuildInfo()
+			if buildVersion == '12.0.0' then
+				msg_user("Welcome to Midnight. BeQuiet has been turned off just this one time for the release of the new expansion. Use /bq on if you wish to reenable it.")
+				ENABLED = 0
+			end
+		end
+	end
+end)
 
 --Create the frame
 local f = CreateFrame("Frame")
@@ -210,11 +235,6 @@ function replace_array(src, target)
 		--msg_user("adding",i,v)
 		target[i] = v
 	end
-end
-
-BQ_RED = "|cffff3333"
-function msg_user(msg)
-	print(BQ_RED..ADDON_NAME.."|r: "..(msg or ""))
 end
 
 --Slash command function
