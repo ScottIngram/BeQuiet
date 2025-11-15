@@ -74,13 +74,11 @@ var_frame:SetScript("OnEvent", function(self, event, arg1)
 		end
 
 		-- Turn off BeQuiet for Midnight launch. The saved var should get created here so it should only happen once.
-		if NEW_EXPAC_LAUNCH == nil then			
+		buildVersion, buildNumber, buildDate, interfaceVersion, localizedVersion, buildInfo = GetBuildInfo()
+		if NEW_EXPAC_LAUNCH == nil and buildVersion == '12.0.0' then			
 			NEW_EXPAC_LAUNCH = true
-			buildVersion, buildNumber, buildDate, interfaceVersion, localizedVersion, buildInfo = GetBuildInfo()
-			if buildVersion == '12.0.0' then
 				msg_user("Welcome to Midnight. BeQuiet has been turned off just this one time for the release of the new expansion. Use /bq on if you wish to reenable it.")
 				ENABLED = 0
-			end
 		end
 	end
 end)
