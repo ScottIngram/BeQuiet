@@ -72,6 +72,10 @@ var_frame:SetScript("OnEvent", function(self, event, arg1)
 			BLACKLIST = BL_DEFAULT
 		end
 
+		if BQ_ENABLE_ESCAPE == nil then
+			BQ_ENABLE_ESCAPE = false
+		end
+
 		init(self)
 	end
 end)
@@ -79,8 +83,9 @@ end)
 function init(self)
 	_G["BINDING_NAME_BeQuiet_CloseTalkingHead"] = ADDON_NAME .. " - Close Talking Head" -- see Bindings.xml
 
+	BQ.versionLabel = "v" .. (C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "1")
 	if VERBOSE then
-		msg_user("loaded " .. "v" .. (C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "1"))
+		msg_user("loaded " .. BQ.versionLabel)
 	end
 end
 
@@ -92,6 +97,8 @@ local keyNameToBind  = "Escape" -- will be temporarily stolen then restored to a
 local isBound
 
 function add_tmp_keybind_that_closes()
+	if not BQ_ENABLE_ESCAPE then return end
+
 	if not isBound then
 		SetOverrideBinding(TalkingHeadFrame, true, keyNameToBind, "BeQuiet_CloseTalkingHead") -- see Bindings.xml
 		isBound = true
@@ -394,7 +401,7 @@ function MyAddonCommands(args)
 	end
 
 	if args == '' then
-		msg_user('version ' .. version)
+		msg_user('version ' .. BQ.versionLabel)
 		msg_user('Options: config | on | off | toggle | verbose | whitelist | blacklist | reset | delete | show | vo')
 		msg_user('-----')
 		if ENABLED == 1 then
