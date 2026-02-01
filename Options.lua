@@ -76,7 +76,7 @@ function Options:init()
                     return hide
                 end,
                 type = 'description',
-                name = BQ_RED.."DISABLED! |r With neither Mute nor Hide, BeQuiet will effectively do nothing.",
+                name = BQ.RED.."DISABLED! |r With neither Mute nor Hide, BeQuiet will effectively do nothing.",
             },
 
             -------------------------------------------------------------------------------
