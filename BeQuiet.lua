@@ -100,6 +100,7 @@ function add_tmp_keybind_that_closes()
 	if not BQ_ENABLE_ESCAPE then return end
 
 	if not isBound then
+		if InCombatLockdown() then return end
 		SetOverrideBinding(TalkingHeadFrame, true, keyNameToBind, "BeQuiet_CloseTalkingHead") -- see Bindings.xml
 		isBound = true
 	end
@@ -111,6 +112,7 @@ function remove_tmp_keybind_that_closes()
 	--local stack = debugstack(1,3,0)
 	--DevTools_Dump(stack)
 
+	if InCombatLockdown() then return end
 	SetOverrideBinding(TalkingHeadFrame, true, keyNameToBind, nil)
 	isBound = false
 end
