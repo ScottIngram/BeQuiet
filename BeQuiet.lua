@@ -76,18 +76,11 @@ var_frame:SetScript("OnEvent", function(self, event, arg1)
 			BQ_ENABLE_ESCAPE = false
 		end
 
-		init(self)
+		_G["BINDING_NAME_BeQuiet_CloseTalkingHead"] = ADDON_NAME .. " - Close Talking Head" -- see Bindings.xml
+
+		BQ.versionLabel = "v" .. (C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "1")
 	end
 end)
-
-function init(self)
-	_G["BINDING_NAME_BeQuiet_CloseTalkingHead"] = ADDON_NAME .. " - Close Talking Head" -- see Bindings.xml
-
-	BQ.versionLabel = "v" .. (C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "1")
-	if VERBOSE then
-		msg_user("loaded " .. BQ.versionLabel)
-	end
-end
 
 -------------------------------------------------------------------------------
 -- Keybinding to let the use manually close the talking head
@@ -390,6 +383,25 @@ function MyAddonCommands(args)
 		end
 	end
 
+	-- ESCAPE KEY --
+
+	local escOriginal = BQ_ENABLE_ESCAPE
+
+	if args == 'esc' then
+		msg_user ('esc (on | off | toggle) - allow the escape key to close the talking head or not')
+	elseif args == 'esc on' then
+		BQ_ENABLE_ESCAPE = true
+	elseif args == 'esc off' then
+		BQ_ENABLE_ESCAPE = false
+	elseif args == 'esc toggle' then
+		BQ_ENABLE_ESCAPE = not BQ_ENABLE_ESCAPE
+	end
+
+	if escOriginal ~= BQ_ENABLE_ESCAPE then
+		local msgOnOrOff = BQ_ENABLE_ESCAPE and "enabled to close" or "disabled from closing"
+		msg_user('Escape key is now ' ..msgOnOrOff.. ' the talking head frame')
+	end
+
 	if args == 'whitelist' then
 		msg_user('whitelist (currentzone | currentsubzone) - toggle whitelisting for the current major zone (Orgrimmar) or sub-zone (Valley of Strength).')
 	end
@@ -404,7 +416,7 @@ function MyAddonCommands(args)
 
 	if args == '' then
 		msg_user('version ' .. BQ.versionLabel)
-		msg_user('Options: config | on | off | toggle | verbose | whitelist | blacklist | reset | delete | show | vo')
+		msg_user('Options: config | on | off | toggle | verbose | whitelist | blacklist | reset | delete | show | vo | esc')
 		msg_user('-----')
 		if ENABLED == 1 then
 			msg_user('is currently enabled.')
